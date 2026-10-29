@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vrushil Davra</title>
+<meta name="description" content="Vrushil Davra is a GenAI developer in Surat and the founder of Wogent, a WhatsApp AI agent platform. Play through his agent graph: Wogent, multi-agent LangGraph systems, MCP servers and Hindi/Hinglish fine-tuning.">
+<link rel="canonical" href="https://vrushil1.github.io/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2312100e'/%3E%3Crect x='12' y='16' width='40' height='26' rx='9' fill='%234fbf86'/%3E%3Cpath d='M18 40l-4 10 12-8z' fill='%234fbf86'/%3E%3Ccircle cx='23' cy='29' r='3' fill='%2306231a'/%3E%3Ccircle cx='32' cy='29' r='3' fill='%2306231a'/%3E%3Ccircle cx='41' cy='29' r='3' fill='%2306231a'/%3E%3C/svg%3E">
+<meta property="og:title" content="Vrushil Davra · GenAI Developer · Founder of Wogent">
+<meta property="og:description" content="Play my portfolio as a WhatsApp message travelling through an agent graph.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vrushil1.github.io/">
+<meta property="og:image" content="https://vrushil1.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Vrushil Davra","jobTitle":"GenAI Developer","url":"https://vrushil1.github.io/","email":"mailto:vrushildavra1234@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Surat","addressCountry":"IN"},"worksFor":{"@type":"Organization","name":"Dominor Digital"},"founder":{"@type":"Organization","name":"Wogent","url":"https://web.wogent.in/"},"alumniOf":{"@type":"CollegeOrUniversity","name":"Silver Oak University"},"sameAs":["https://github.com/VRUSHIL1"]}
+</script>
+<meta name="theme-color" content="#12100e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a playable agent graph (canvas world + HUD + side panel) with a scroll-told résumé as the second mode.
+   Single dark world on purpose: a night-time chat, warm charcoal, saffron for interaction, WhatsApp green only for messages. */
+:root{
+  --bg:#12100e;
+  --bg-2:#1c1916;
+  --bg-3:#26221e;
+  --line:#3a342d;
+  --fg:#f2ebe0;
+  --muted:#a89f92;
+  --accent:#ffa94d;
+  --accent-ink:#2b1800;
+  --wa:#4fbf86;
+  --wa-deep:#15382a;
+  --wa-ink:#e9fff3;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --gutter-l:max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r:max(16px, env(safe-area-inset-right, 0px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+body.is-play{overflow:hidden}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+kbd{font:600 11px/1 var(--f-mono);padding:3px 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--bg-3);color:var(--fg)}
+.skip{position:absolute;left:-999px;top:8px;z-index:100;background:var(--accent);color:var(--accent-ink);padding:8px 12px;border-radius:8px}
+.skip:focus{left:16px}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;inset:0 0 auto;z-index:30;display:flex;align-items:center;gap:16px;
+  padding:calc(12px + env(safe-area-inset-top, 0px)) var(--gutter-r) 12px var(--gutter-l);
+  background:linear-gradient(var(--bg) 30%, transparent);pointer-events:none}
+.hud > *{pointer-events:auto}
+body:not(.is-play) .hud{background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-bottom:10px}
+.brand{display:flex;flex-direction:column;text-decoration:none;line-height:1.15;min-width:0}
+.brand-name{font:800 18px/1.1 var(--f-display);letter-spacing:-.01em}
+.brand-role{font:400 11px/1.4 var(--f-mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.hud-stats{margin-left:auto;display:flex;gap:14px;font:400 12px/1 var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.hud-stats b{color:var(--accent);font-weight:600}
+body:not(.is-play) .hud-stats{display:none}
+body:not(.is-play) .mode{margin-left:auto}
+.mode{display:flex;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--bg-2)}
+.mode-btn{border:0;background:transparent;padding:6px 14px;border-radius:999px;font:600 13px/1 var(--f-body);color:var(--muted);cursor:pointer}
+.mode-btn[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+/* ---------- Game ---------- */
+#game{position:fixed;inset:0;overflow:hidden}
+#world{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair;touch-action:none}
+#minimap{position:absolute;right:calc(16px + env(safe-area-inset-right, 0px));bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  width:170px;height:111px;border:1px solid var(--line);border-radius:10px;background:var(--bg-2);opacity:.92}
+.help{position:absolute;left:calc(16px + env(safe-area-inset-left, 0px));bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  margin:0;font:400 12px/1.8 var(--f-mono);color:var(--muted);max-width:calc(100% - 220px)}
+.help kbd{margin-right:2px}
+.toast{position:absolute;left:50%;top:calc(72px + env(safe-area-inset-top, 0px));transform:translateX(-50%);
+  font:600 13px/1 var(--f-mono);padding:10px 14px;border-radius:999px;background:var(--bg-3);border:1px solid var(--line);
+  color:var(--fg);opacity:0;pointer-events:none;max-width:calc(100% - 32px);width:max-content;text-align:center;line-height:1.4}
+.toast b{color:var(--accent)}
+
+.panel{position:absolute;z-index:20;top:calc(70px + env(safe-area-inset-top, 0px));right:calc(16px + env(safe-area-inset-right, 0px));
+  bottom:calc(16px + env(safe-area-inset-bottom, 0px));width:min(460px, calc(100% - 32px));
+  background:var(--bg-2);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgb(0 0 0 / .5);
+  display:flex;flex-direction:column;overflow:hidden}
+.panel-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);
+  background:var(--bg-3);font-size:20px;line-height:1;cursor:pointer;z-index:2}
+.panel-body{overflow-y:auto;padding:26px 24px 28px;overscroll-behavior:contain}
+.panel .kind{font:600 11px/1 var(--f-mono);letter-spacing:.12em;color:var(--accent);margin:0 0 10px;text-transform:uppercase}
+.panel h2{font:800 34px/1.02 var(--f-display);letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance;padding-right:40px}
+.panel h3{font:600 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:24px 0 10px}
+.panel .lede{color:var(--fg);margin:0;font-size:16px}
+.panel p{margin:0 0 10px;color:var(--muted);font-size:15px}
+.ticks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ticks li{position:relative;padding-left:20px;font-size:15px;color:var(--fg)}
+.ticks li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:400 12px/1 var(--f-mono);padding:7px 10px;border:1px solid var(--line);border-radius:999px;color:var(--fg);background:var(--bg)}
+.chip.got{border-color:var(--accent);color:var(--accent)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:12px 18px;font:600 14px/1 var(--f-body);text-decoration:none;cursor:pointer;border:1px solid var(--line);background:var(--bg-3);color:var(--fg)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent}
+.btn kbd{background:rgb(0 0 0 / .12);border-color:rgb(0 0 0 / .2);color:inherit}
+.panel .row{margin-top:22px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:18px 0 0;font-size:14px}
+.facts dt{font:400 12px/1.6 var(--f-mono);color:var(--muted)}
+.facts dd{margin:0}
+.go-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.go-list button{width:100%;text-align:left;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;
+  border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+.go-list button span:last-child{font:400 12px/1 var(--f-mono);color:var(--muted);white-space:nowrap}
+.go-list button.done span:last-child{color:var(--accent)}
+.go-list b{font:600 15px/1.3 var(--f-display)}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:18px;border-left:1px solid var(--line);padding-left:18px}
+.tl li{position:relative}
+.tl li::before{content:"";position:absolute;left:-23px;top:7px;width:9px;height:9px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.tl .when{font:400 12px/1.4 var(--f-mono);color:var(--muted)}
+.tl b{display:block;font:600 17px/1.3 var(--f-display)}
+.tl .org{color:var(--accent)}
+.tl p{margin:4px 0 0;font-size:14px}
+.copy-line{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font:400 14px/1.4 var(--f-mono);padding:12px 14px;border:1px dashed var(--line);border-radius:12px;user-select:all}
+
+/* chat (shared) */
+.chat{display:flex;flex-direction:column;gap:8px;padding:14px;background:#0f1a15;border-radius:14px;border:1px solid var(--wa-deep)}
+.msg{max-width:84%;padding:8px 11px 6px;border-radius:12px;font-size:14px;line-height:1.4;position:relative}
+.msg small{display:block;text-align:right;font:400 10px/1.4 var(--f-mono);opacity:.6;margin-top:2px}
+.msg.c{align-self:flex-start;background:var(--bg-3);border-top-left-radius:3px}
+.msg.a{align-self:flex-end;background:var(--wa-deep);color:var(--wa-ink);border-top-right-radius:3px}
+.voice{display:flex;align-items:center;gap:8px;min-width:150px}
+.voice i{display:block;width:0;height:0;border-left:9px solid currentColor;border-top:6px solid transparent;border-bottom:6px solid transparent}
+.voice .wave{flex:1;height:18px;background:repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 5px);
+  -webkit-mask:linear-gradient(90deg,#000 0 100%);mask-image:radial-gradient(ellipse 100% 60% at 50% 50%, #000 40%, transparent 100%);opacity:.7}
+.voice span{font:400 11px/1 var(--f-mono)}
+
+.overlay{position:absolute;inset:0;z-index:25;display:grid;place-items:center;padding:90px var(--gutter-r) 40px var(--gutter-l);
+  background:radial-gradient(ellipse at center, rgb(18 16 14 / .55), rgb(18 16 14 / .92))}
+.card{width:min(560px,100%);background:var(--bg-2);border:1px solid var(--line);border-radius:22px;padding:30px 28px;box-shadow:0 40px 100px rgb(0 0 0 / .55)}
+.card .eyebrow{display:flex;align-items:center;gap:8px}
+.card .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--wa);box-shadow:0 0 0 4px rgb(79 191 134 / .2)}
+.card h1,.card h2{font:800 clamp(34px, 6vw, 52px)/.98 var(--f-display);letter-spacing:-.03em;margin:10px 0 14px;text-wrap:balance}
+.card p{color:var(--muted);margin:0 0 22px}
+.card .fine{margin:22px 0 0;font:400 12px/1.5 var(--f-mono)}
+.eyebrow{font:600 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0}
+
+/* ---------- Read mode ---------- */
+#read{padding-top:72px}
+.wrap{width:100%;max-width:1160px;margin:0 auto;padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
+.block{padding-block:clamp(72px, 12vw, 140px)}
+.block h2.sec{font:800 clamp(36px, 6vw, 72px)/.98 var(--f-display);letter-spacing:-.03em;margin:12px 0 40px;text-wrap:balance;max-width:16ch}
+.hero{padding-block:clamp(56px, 10vw, 120px) clamp(40px, 6vw, 80px)}
+.hero-title{font:800 clamp(44px, 9vw, 120px)/.92 var(--f-display);letter-spacing:-.045em;margin:18px 0 26px;max-width:13ch}
+.hero-title .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.06em}
+.hero-title .w > span{display:inline-block}
+.hero-title em{font-style:normal;color:var(--wa)}
+.hero-sub{max-width:56ch;color:var(--muted);font-size:clamp(17px, 2vw, 20px);margin:0 0 30px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:40px;font:400 13px/1.4 var(--f-mono);color:var(--muted)}
+.hero-meta b{color:var(--fg);font-weight:600}
+
+.statement{padding-block:clamp(60px, 10vw, 120px)}
+.statement-text{font:600 clamp(28px, 4.6vw, 60px)/1.12 var(--f-display);letter-spacing:-.025em;margin:0;max-width:22ch;text-wrap:balance}
+.statement-text .sw{opacity:.22}
+.no-anim .statement-text .sw{opacity:1}
+
+.showcase{border-block:1px solid var(--line);background:var(--bg-2)}
+.showcase-inner{display:grid;grid-template-columns:1fr minmax(0, 380px);gap:clamp(32px, 6vw, 90px);align-items:center;padding-block:clamp(64px, 9vw, 110px)}
+.sc-copy{min-width:0}
+.sc-copy h2{font:800 clamp(52px, 9vw, 110px)/.9 var(--f-display);letter-spacing:-.05em;margin:14px 0 18px}
+.sc-copy > p{color:var(--muted);max-width:52ch;margin:0 0 26px;font-size:17px}
+.steps{list-style:none;margin:0 0 30px;padding:0;display:grid;gap:4px}
+.steps li{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--line);color:var(--muted);transition:color .3s}
+.steps li span{font:400 12px/1.7 var(--f-mono)}
+.steps li.on{color:var(--fg)}
+.steps li.on span{color:var(--accent)}
+.phone{width:100%;max-width:380px;justify-self:center;border-radius:38px;padding:12px;background:#0b0a09;border:1px solid var(--line);box-shadow:0 50px 100px rgb(0 0 0 / .5)}
+.phone-top{display:flex;align-items:center;gap:10px;padding:10px 12px 12px;border-bottom:1px solid var(--wa-deep)}
+.phone-top .av{width:34px;height:34px;border-radius:50%;background:var(--wa);color:#05210f;display:grid;place-items:center;font:800 15px/1 var(--f-display)}
+.phone-top b{display:block;font:600 14px/1.2 var(--f-body)}
+.phone-top small{font:400 11px/1.2 var(--f-mono);color:var(--wa)}
+.phone .chat{border:0;border-radius:0 0 28px 28px;min-height:420px;justify-content:flex-end}
+.stack-line{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(min(100%, 330px), 1fr));gap:16px}
+.pcard{position:relative;display:flex;flex-direction:column;gap:12px;padding:24px;border:1px solid var(--line);border-radius:20px;background:var(--bg-2);
+  text-decoration:none;min-width:0;transform-style:preserve-3d;transition:border-color .25s}
+.pcard:hover{border-color:var(--accent)}
+.pcard .kind{font:600 11px/1 var(--f-mono);letter-spacing:.12em;color:var(--accent);text-transform:uppercase}
+.pcard h3{font:800 26px/1.05 var(--f-display);letter-spacing:-.02em;margin:0}
+.pcard p{margin:0;color:var(--muted);font-size:15px}
+.pcard .chips{margin-top:auto;padding-top:8px}
+.pcard .arrow{position:absolute;top:22px;right:22px;font:400 16px/1 var(--f-mono);color:var(--muted)}
+
+.xp{display:grid;grid-template-columns:minmax(0, 1fr);gap:0;position:relative;padding-left:28px}
+.xp-line{position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:var(--line);transform-origin:top}
+.xp-line i{position:absolute;inset:0;background:var(--accent);transform-origin:top}
+.xp-item{display:grid;grid-template-columns:minmax(0, 220px) minmax(0, 1fr);gap:8px 40px;padding:28px 0;border-top:1px solid var(--line);position:relative}
+.xp-item::before{content:"";position:absolute;left:-28px;top:36px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.xp-when{font:400 13px/1.6 var(--f-mono);color:var(--muted)}
+.xp-item h3{font:800 clamp(22px, 3vw, 30px)/1.1 var(--f-display);letter-spacing:-.02em;margin:0 0 4px}
+.xp-item h3 span{color:var(--accent)}
+.xp-item ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}
+.xp-item li{margin:4px 0}
+
+.marquees{overflow:hidden}
+.mq{display:flex;width:max-content;gap:12px;padding-block:6px;animation:mq 40s linear infinite}
+.mq.rev{animation-direction:reverse;animation-duration:46s}
+.mq span{font:600 clamp(20px, 3vw, 34px)/1 var(--f-display);padding:16px 24px;border:1px solid var(--line);border-radius:999px;white-space:nowrap;letter-spacing:-.01em}
+.mq span:nth-child(3n){background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.mq span:nth-child(5n){color:var(--accent);border-color:var(--accent)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+.contact h2.big{font:800 clamp(52px, 11vw, 150px)/.9 var(--f-display);letter-spacing:-.05em;margin:14px 0 30px;max-width:10ch}
+.contact .row{gap:12px}
+.foot{padding-block:30px calc(30px + env(safe-area-inset-bottom, 0px));border-top:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;font:400 12px/1.5 var(--f-mono);color:var(--muted)}
+
+@media (max-width: 899px){
+  .showcase-inner{grid-template-columns:minmax(0,1fr)}
+  .xp-item{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .hud-stats{display:none}
+  .brand-role{display:none}
+  #minimap{width:120px;height:78px}
+  .help{max-width:calc(100% - 160px);font-size:11px}
+  .help .keys{display:none}
+  .panel{top:auto;left:calc(10px + env(safe-area-inset-left, 0px));right:calc(10px + env(safe-area-inset-right, 0px));width:auto;max-height:74%;border-radius:20px 20px 16px 16px}
+  .panel h2{font-size:28px}
+  .card{padding:24px 20px}
+}
+@media (prefers-reduced-motion: reduce){
+  .mq{animation:none;flex-wrap:wrap;width:auto}
+  .statement-text .sw{opacity:1}
+}
+</style>
+</head>
+<body class="is-play">
+<noscript>
+  <style>#game,.hud,.skip{display:none!important}body.is-play{overflow:auto}.ns{padding:40px 0 60px}.ns h1{font:800 clamp(40px,8vw,80px)/.95 var(--f-display);letter-spacing:-.04em;margin:14px 0 18px}.ns h2{font:800 28px/1.1 var(--f-display);margin:40px 0 10px}.ns p,.ns li{color:var(--muted)}.ns b{color:var(--fg)}</style>
+  <main class="wrap ns">
+    <p class="eyebrow">GenAI Developer · Founder of Wogent · Surat</p>
+    <h1>Vrushil Davra</h1>
+    <p>I build AI agents that answer customers on WhatsApp. Turn on JavaScript to play the portfolio; everything is also below.</p>
+    <h2>Wogent (founder, my own product)</h2>
+    <p>A production WhatsApp AI agent platform for Indian businesses, live at <a href="https://web.wogent.in/">web.wogent.in</a>. Replies in Hindi, Gujarati and English, takes orders, reads photos and voice notes, runs broadcasts and follow-up journeys, and hands off to staff in a shared inbox.</p>
+    <h2>Experience</h2>
+    <ul>
+      <li><b>Founder · Wogent</b>: built and runs the platform end to end</li>
+      <li><b>GenAI Developer · Dominor Digital</b>, Sep 2026 – present: websites and creative pipelines for clients</li>
+      <li><b>Junior AI Engineer · Mirai Minds</b>, Aug 2025 – Sep 2026: WhatsApp agent, MCP workflows, FastAPI backends</li>
+      <li><b>AI/ML &amp; Data Analytics Intern · 360DigiTMG</b>, Dec 2024 – Aug 2025</li>
+      <li><b>BCA · Silver Oak University</b>, 2022 – 2025, CGPA 8.64</li>
+    </ul>
+    <h2>Open source</h2>
+    <ul>
+      <li><a href="https://github.com/VRUSHIL1/multi-agent-system">multi-agent-system</a>: LangGraph orchestrator, planner and supervisor</li>
+      <li><a href="https://github.com/VRUSHIL1/database-mcp">database-mcp</a>: MCP server for safe MySQL access</li>
+      <li><a href="https://github.com/VRUSHIL1/shop-chatbot-v2">shop-chatbot-v2</a>: document Q&amp;A on WhatsApp and Telegram</li>
+      <li><a href="https://github.com/VRUSHIL1/inline-suggestion">inline-suggestion</a>: cursor-aware completion API via LiteLLM</li>
+      <li><a href="https://github.com/VRUSHIL1/smart-turn-finetuning-pipeline">smart-turn-finetuning-pipeline</a>: Hindi/Hinglish turn detection</li>
+    </ul>
+    <h2>Contact</h2>
+    <p><a href="mailto:vrushildavra1234@gmail.com">vrushildavra1234@gmail.com</a> · <a href="https://github.com/VRUSHIL1">GitHub</a></p>
+  </main>
+</noscript>
+<a class="skip" href="#read">Skip to the résumé view</a>
+
+<header class="hud" id="hud">
+  <a class="brand" href="#play"><span class="brand-name">Vrushil Davra</span><span class="brand-role">GenAI Developer · Founder, Wogent</span></a>
+  <div class="hud-stats" aria-live="polite"><span><b id="statNodes">0</b>/<span id="statNodesMax">11</span> nodes</span><span><b id="statTools">0</b>/<span id="statToolsMax">18</span> tools</span></div>
+  <nav class="mode" aria-label="View">
+    <button class="mode-btn" id="modePlay" aria-pressed="true">Play</button>
+    <button class="mode-btn" id="modeRead" aria-pressed="false">Read</button>
+  </nav>
+</header>
+
+<section id="game" aria-label="Playable portfolio">
+  <canvas id="world" tabindex="0" aria-label="Map of Vrushil's agent graph. Move with arrow keys or WASD, or tap a spot to travel there."></canvas>
+  <canvas id="minimap" aria-hidden="true"></canvas>
+  <p class="help"><span class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrows to move · </span>tap anywhere to travel · walk into a node to open it</p>
+  <div class="toast" id="toast" role="status"></div>
+
+  <aside class="panel" id="panel" hidden aria-labelledby="panelTitle">
+    <button class="panel-close" id="panelClose" aria-label="Close panel">×</button>
+    <div class="panel-body" id="panelBody"></div>
+  </aside>
+
+  <div class="overlay" id="startOverlay">
+    <div class="card">
+      <p class="eyebrow">Incoming message · 10:40 PM</p>
+      <h1>You are a WhatsApp message.</h1>
+      <p>Travel through my agent graph to get your answer. Every node is real work: the orchestrator, my memory, the tools I use, and the agents I've shipped to production.</p>
+      <div class="row">
+        <button class="btn primary" id="startBtn">Start the run <kbd>Enter</kbd></button>
+        <button class="btn ghost" id="readBtn">Read the résumé instead</button>
+      </div>
+      <p class="fine">Vrushil Davra · Founder of Wogent · GenAI Developer at Dominor Digital</p>
+    </div>
+  </div>
+
+  <div class="overlay" id="doneOverlay" hidden>
+    <div class="card">
+      <p class="eyebrow">Supervisor · response delivered</p>
+      <h2>Answered.</h2>
+      <p id="doneText">You visited every node.</p>
+      <div class="row">
+        <button class="btn primary" id="doneContact">Get in touch</button>
+        <button class="btn" id="doneRead">Read the résumé</button>
+        <button class="btn ghost" id="doneReplay">Replay</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main id="read" hidden>
+  <section class="hero wrap">
+    <p class="eyebrow">GenAI Developer · Founder of Wogent · Surat</p>
+    <h1 class="hero-title" id="heroTitle">I build AI agents that answer your customers on <em>WhatsApp.</em></h1>
+    <p class="hero-sub">Agentic systems with LangGraph, MCP tools, memory and RAG, built on FastAPI and Postgres. My flagship, Wogent, answers customers for Indian businesses in Hindi, Gujarati and English, around the clock.</p>
+    <div class="row">
+      <button class="btn primary" data-scroll="showcase">See Wogent</button>
+      <button class="btn" data-mode="play">Play the portfolio</button>
+      <a class="btn ghost" href="https://github.com/VRUSHIL1" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+    <div class="hero-meta">
+      <span>Founder · <b>Wogent</b></span>
+      <span>Now · <b>GenAI Developer, Dominor Digital</b></span>
+      <span>Before · <b>Mirai Minds, 360DigiTMG</b></span>
+      <span>BCA · <b>Silver Oak University, CGPA 8.64</b></span>
+    </div>
+  </section>
+
+  <section class="statement wrap" id="statement">
+    <p class="statement-text" id="statementText">Customers message at 11 PM, in three languages, with voice notes and blurry photos of the part they need. I build the agents that answer them, and the backend that keeps answering when a service goes down.</p>
+  </section>
+
+  <section class="showcase" id="showcase">
+    <div class="wrap showcase-inner">
+      <div class="sc-copy">
+        <p class="eyebrow">Flagship · my own product · founder · in production</p>
+        <h2>Wogent</h2>
+        <p>A WhatsApp AI agent for Indian businesses. It answers customers, takes orders and books appointments on the official WhatsApp Cloud API, and runs broadcasts and follow-up journeys. Pricing is per reply, from ₹1.</p>
+        <ol class="steps" id="steps"></ol>
+        <div class="row">
+          <a class="btn primary" href="https://web.wogent.in/" target="_blank" rel="noopener">Visit web.wogent.in ↗</a>
+        </div>
+        <div class="stack-line" id="wogentStack" style="margin-top:22px"></div>
+      </div>
+      <div class="phone" aria-label="Demo conversation with a Wogent agent">
+        <div class="phone-top"><div class="av">G</div><div><b>Gada Electronics</b><small>Wogent agent · online</small></div></div>
+        <div class="chat" id="phoneChat"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap block" id="projects">
+    <p class="eyebrow">Open source</p>
+    <h2 class="sec">More agents and tools I've built.</h2>
+    <div class="grid" id="projectGrid"></div>
+  </section>
+
+  <section class="wrap block" id="experience" style="padding-top:0">
+    <p class="eyebrow">Experience</p>
+    <h2 class="sec">Where I've done the work.</h2>
+    <div class="xp" id="xp"><div class="xp-line"><i></i></div></div>
+  </section>
+
+  <section class="block marquees" id="stack" style="padding-top:0">
+    <div class="wrap"><p class="eyebrow">Stack</p><h2 class="sec">Tools I reach for.</h2></div>
+    <div class="mq" id="mq1"></div>
+    <div class="mq rev" id="mq2"></div>
+  </section>
+
+  <section class="wrap block contact" id="contact" style="padding-top:0">
+    <p class="eyebrow">Contact</p>
+    <h2 class="big">Let's build an agent.</h2>
+    <div class="row">
+      <span class="copy-line" id="emailText">vrushildavra1234@gmail.com</span>
+      <button class="btn primary" data-copy="vrushildavra1234@gmail.com">Copy email</button>
+      <a class="btn" href="https://github.com/VRUSHIL1" target="_blank" rel="noopener">GitHub ↗</a>
+      <a class="btn ghost" href="https://web.wogent.in/" target="_blank" rel="noopener">Wogent ↗</a>
+    </div>
+  </section>
+
+  <footer class="wrap foot">
+    <span>© 2026 Vrushil Davra · Surat, Gujarat</span>
+    <span>Built with canvas + GSAP · <button class="btn ghost" data-mode="play" style="padding:6px 12px;font-size:12px">Play mode</button></span>
+  </footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+"use strict";
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const G = typeof gsap !== "undefined" ? gsap : null;
+if (G && typeof ScrollTrigger !== "undefined") G.registerPlugin(ScrollTrigger);
+if (!G || reduce) document.documentElement.classList.add("no-anim");
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const GH = "https://github.com/VRUSHIL1";
+const EMAIL = "vrushildavra1234@gmail.com";
+
+/* ================= CONTENT ================= */
+const CHAT = [
+  { from: "c", text: "LED bulb stock ma che?", time: "10:40 PM" },
+  { from: "a", text: "Haa, 9W LED bulb stock ma che. ₹99 per piece. Ketla joie?", time: "10:40 PM" },
+  { from: "c", text: "10 joie. Same address par moklo", time: "10:41 PM" },
+  { from: "a", text: "Order #GE1042 confirmed ✓\n10 × 9W LED · ₹990 · delivery tomorrow", time: "10:41 PM" },
+  { from: "c", voice: "0:06", time: "10:42 PM" },
+  { from: "a", voice: "0:09", time: "10:42 PM" }
+];
+const STEPS = [
+  "Reads mixed Gujarati, Hindi and English and replies in the customer's language",
+  "Checks live stock and takes the order inside the chat",
+  "Listens to voice notes and answers with a natural Hinglish voice note",
+  "Hands the chat to your team when someone is upset, with the full history open"
+];
+const WOGENT_STACK = ["FastAPI (async)", "SQLAlchemy 2.0", "PostgreSQL + pgvector", "Redis", "Mem0", "Gemini", "WhatsApp Cloud API", "Shopify", "Razorpay", "SSE", "TTS voice notes"];
+
+const PROJECTS = [
+  {
+    id: "multi", repo: "multi-agent-system", kind: "Agent orchestration", title: "Multi-agent LLM system",
+    summary: "A LangGraph pipeline where an orchestrator routes each request to a direct answer, a single tool, or a planning loop.",
+    points: [
+      "Orchestrator picks DIRECT, TOOL or PLANNER with structured output, behind guard rails for prompt injection and input limits",
+      "Planner creates one task at a time; the executor runs it with retries and timeouts, looping up to 20 steps",
+      "Supervisor merges every result into one answer",
+      "Mem0 semantic memory plus a rolling summary every 10 message pairs",
+      "PDF upload, chunking and FAISS search; any MCP server plugs in over stdio or HTTP"
+    ],
+    stack: ["LangGraph", "LangChain", "FastAPI", "Gemini 2.5", "Mem0", "FAISS", "PostgreSQL", "MCP"]
+  },
+  {
+    id: "dbmcp", repo: "database-mcp", kind: "MCP server", title: "Database MCP server",
+    summary: "Lets Claude Desktop or any MCP client inspect and work with a MySQL database through typed tools.",
+    points: [
+      "Introspection tools: list tables, describe schemas, count rows, sample data",
+      "Read-only SQL tool that only accepts SELECT, with row limits",
+      "CRUD tools for users, products and orders with pagination and search",
+      "Parameterized queries throughout to block SQL injection"
+    ],
+    stack: ["Python", "MCP", "MySQL", "SQLAlchemy", "Pydantic"]
+  },
+  {
+    id: "shop", repo: "shop-chatbot-v2", kind: "RAG chatbot", title: "Shop chatbot",
+    summary: "A Gemini chatbot that answers questions from uploaded documents across WhatsApp and Telegram.",
+    points: [
+      "Document upload and vector search with ChromaDB for grounded answers",
+      "Persistent conversation memory in MySQL across sessions",
+      "MCP tools for store data; the first version ran on OpenAI"
+    ],
+    stack: ["Gemini API", "OpenAI API", "FastAPI", "ChromaDB", "MySQL", "MCP", "Telegram"]
+  },
+  {
+    id: "inline", repo: "inline-suggestion", kind: "LLM API", title: "Inline suggestion API",
+    summary: "Real-time, cursor-aware text completion served from FastAPI, model-agnostic through LiteLLM.",
+    points: [
+      "Generates suggestions from the text before and after the cursor",
+      "Switches between Gemini and OpenAI models through one LiteLLM interface"
+    ],
+    stack: ["FastAPI", "LiteLLM", "Gemini API", "OpenAI API"]
+  },
+  {
+    id: "smart", repo: "smart-turn-finetuning-pipeline", kind: "Fine-tuning", title: "Smart-turn fine-tuning",
+    summary: "Teaches a model when a Hindi or Hinglish speaker has finished their turn, even mid-sentence.",
+    points: [
+      "Smart-turn dictionaries for complete and cut-off utterances like “haan woh order…”",
+      "Dataset design for code-mixed, noisy, spoken input",
+      "Reproducible preprocessing, training and evaluation on Colab"
+    ],
+    stack: ["PyTorch", "Transformers", "Hugging Face", "Colab"]
+  }
+];
+
+const EXPERIENCE = [
+  { when: "Own product", where: "Surat", role: "Founder", org: "Wogent",
+    points: ["Founded and built Wogent end to end: a multi-tenant WhatsApp AI agent platform for Indian businesses, live at web.wogent.in", "Agent backend on async FastAPI, Postgres + pgvector RAG, Redis queues and locks, Mem0 memory, and the official WhatsApp Cloud API", "Broadcasts and follow-up journeys with STOP handling and quiet hours, plus per-service timeouts and fallbacks so replies never stop"] },
+  { when: "Sep 2026 – Present", where: "Surat", role: "GenAI Developer", org: "Dominor Digital",
+    points: ["Build websites and creative pipelines for clients"] },
+  { when: "Aug 2025 – Sep 2026", where: "Surat", role: "Junior AI Engineer", org: "Mirai Minds",
+    points: ["Built a WhatsApp AI agent that handles queries and automates replies end to end", "Built chatbots on OpenAI, Gemini and LiteLLM, plus MCP-based LLM workflows", "FastAPI backends; prompt design, token optimization, error handling and reliability"] },
+  { when: "Dec 2024 – Aug 2025", where: "Bangalore", role: "AI/ML & Data Analytics Intern", org: "360DigiTMG",
+    points: ["Python, SQL, machine learning and deep learning foundations", "Data cleaning, EDA, and dashboards in Tableau and Power BI"] },
+  { when: "2022 – 2025", where: "Ahmedabad", role: "BCA, CGPA 8.64", org: "Silver Oak University", points: [] }
+];
+
+const SKILL_GROUPS = [
+  ["Agents", ["LangGraph", "LangChain", "MCP", "Mem0", "LiteLLM"]],
+  ["Models", ["OpenAI API", "Gemini API", "Transformers", "PyTorch"]],
+  ["Retrieval", ["FAISS", "ChromaDB"]],
+  ["Backend", ["Python", "FastAPI", "SQLAlchemy", "PostgreSQL", "Redis", "MySQL"]],
+  ["Channels", ["WhatsApp Cloud API"]]
+];
+const SKILLS = SKILL_GROUPS.flatMap(g => g[1]);
+
+/* ================= SHARED RENDERERS ================= */
+const chips = (arr, got) => `<div class="chips">${arr.map(s => `<span class="chip${got && got.has(s) ? " got" : ""}">${esc(s)}</span>`).join("")}</div>`;
+const chatHTML = items => items.map(m => {
+  const body = m.voice
+    ? `<div class="voice"><i></i><div class="wave"></div><span>${esc(m.voice)}</span></div>`
+    : esc(m.text).replace(/\n/g, "<br>");
+  return `<div class="msg ${m.from}">${body}<small>${esc(m.time)}</small></div>`;
+}).join("");
+
+/* ================= GAME WORLD ================= */
+const WORLD = { w: 2640, h: 1760 };
+const SPAWN = { x: 300, y: 880 };
+const NODES = [
+  { id: "orch",    x: 720,  y: 880,  r: 72, kind: "Orchestrator", title: "About me" },
+  { id: "memory",  x: 780,  y: 360,  r: 66, kind: "Memory",       title: "Experience" },
+  { id: "tools",   x: 1180, y: 1340, r: 66, kind: "Tools",        title: "Stack" },
+  { id: "planner", x: 1260, y: 660,  r: 66, kind: "Planner",      title: "Projects" },
+  { id: "wogent",  x: 1780, y: 960,  r: 98, kind: "Flagship",     title: "Wogent", flagship: true },
+  { id: "multi",   x: 1580, y: 300,  r: 60, kind: "Orchestration", title: "Multi-agent" },
+  { id: "dbmcp",   x: 2080, y: 340,  r: 60, kind: "MCP server",   title: "Database MCP" },
+  { id: "shop",    x: 2360, y: 700,  r: 60, kind: "RAG",          title: "Shop chatbot" },
+  { id: "inline",  x: 2340, y: 1170, r: 60, kind: "LLM API",      title: "Inline suggest" },
+  { id: "smart",   x: 1840, y: 1460, r: 60, kind: "Fine-tune",    title: "Smart-turn" },
+  { id: "super",   x: 2400, y: 1560, r: 76, kind: "Supervisor",   title: "Contact" }
+];
+const N = Object.fromEntries(NODES.map(n => [n.id, n]));
+N.in = { id: "in", x: SPAWN.x, y: SPAWN.y, r: 0 };
+const EDGES = [["in","orch"],["orch","memory"],["orch","planner"],["orch","tools"],["memory","multi"],["planner","multi"],["planner","dbmcp"],["planner","wogent"],["wogent","shop"],["wogent","inline"],["wogent","smart"],["tools","smart"],["dbmcp","shop"],["inline","super"],["smart","super"]];
+
+const TOKENS = SKILLS.map((name, i) => {
+  const ring = i % 3, a = (i / SKILLS.length) * Math.PI * 2 + ring * 0.35;
+  const rad = 175 + ring * 105;
+  return { name, x: N.tools.x + Math.cos(a) * rad * 1.25, y: Math.min(WORLD.h - 50, N.tools.y + Math.sin(a) * rad * 0.8), got: false, phase: i * 0.7 };
+});
+
+const state = {
+  started: false, paused: true, startTime: 0, visited: new Set(), got: new Set(), done: false,
+  player: { x: SPAWN.x, y: SPAWN.y, vx: 0, vy: 0, trail: [] },
+  cam: { x: SPAWN.x, y: SPAWN.y }, target: null, keys: {}, openNode: null, t: 0
+};
+
+const canvas = $("#world"), ctx = canvas.getContext("2d");
+const mini = $("#minimap"), mctx = mini.getContext("2d");
+let vw = 0, vh = 0, dpr = 1, scale = 1;
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  vw = canvas.clientWidth; vh = canvas.clientHeight;
+  canvas.width = Math.round(vw * dpr); canvas.height = Math.round(vh * dpr);
+  scale = vw < 700 ? 0.6 : vw < 1100 ? 0.85 : 1;
+  const mw = mini.clientWidth, mh = mini.clientHeight;
+  mini.width = Math.round(mw * dpr); mini.height = Math.round(mh * dpr);
+}
+window.addEventListener("resize", resize);
+
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C = {};
+function readColors() { ["--bg","--bg-2","--bg-3","--line","--fg","--muted","--accent","--wa","--wa-deep"].forEach(k => C[k.slice(2)] = css(k)); }
+readColors();
+const FONT = { d: '"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif', m: '"JetBrains Mono", ui-monospace, Menlo, monospace' };
+
+function bez(a, b, t) {
+  const mx = (a.x + b.x) / 2;
+  const p0 = a, p1 = { x: mx, y: a.y }, p2 = { x: mx, y: b.y }, p3 = b, u = 1 - t;
+  return { x: u*u*u*p0.x + 3*u*u*t*p1.x + 3*u*t*t*p2.x + t*t*t*p3.x, y: u*u*u*p0.y + 3*u*u*t*p1.y + 3*u*t*t*p2.y + t*t*t*p3.y };
+}
+
+function roundRect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+
+/* ---------- update ---------- */
+function update(dt) {
+  state.t += dt;
+  const p = state.player, k = state.keys;
+  if (!state.paused) {
+    let ax = (k.ArrowRight || k.d ? 1 : 0) - (k.ArrowLeft || k.a ? 1 : 0);
+    let ay = (k.ArrowDown || k.s ? 1 : 0) - (k.ArrowUp || k.w ? 1 : 0);
+    if (ax || ay) state.target = null;
+    else if (state.target) {
+      const dx = state.target.x - p.x, dy = state.target.y - p.y, d = Math.hypot(dx, dy);
+      if (d < 10) state.target = null; else { ax = dx / d; ay = dy / d; if (d < 120) { ax *= d / 120; ay *= d / 120; } }
+    }
+    const m = Math.hypot(ax, ay); if (m > 1) { ax /= m; ay /= m; }
+    const speed = 460, ease = Math.min(1, dt * 9);
+    p.vx += (ax * speed - p.vx) * ease; p.vy += (ay * speed - p.vy) * ease;
+  } else { p.vx *= 0.85; p.vy *= 0.85; }
+  p.x = Math.max(30, Math.min(WORLD.w - 30, p.x + p.vx * dt));
+  p.y = Math.max(30, Math.min(WORLD.h - 30, p.y + p.vy * dt));
+  if (Math.hypot(p.vx, p.vy) > 40) { p.trail.push({ x: p.x, y: p.y, life: 1 }); }
+  p.trail.forEach(q => q.life -= dt * 2.2); p.trail = p.trail.filter(q => q.life > 0).slice(-40);
+
+  const vwW = vw / scale, vhW = vh / scale;
+  const tx = WORLD.w > vwW ? Math.max(vwW / 2, Math.min(WORLD.w - vwW / 2, p.x)) : WORLD.w / 2;
+  const ty = WORLD.h > vhW ? Math.max(vhW / 2, Math.min(WORLD.h - vhW / 2, p.y)) : WORLD.h / 2;
+  state.cam.x += (tx - state.cam.x) * Math.min(1, dt * 5);
+  state.cam.y += (ty - state.cam.y) * Math.min(1, dt * 5);
+
+  if (!state.started) return;
+  for (const tk of TOKENS) {
+    if (!tk.got && Math.hypot(tk.x - p.x, tk.y - p.y) < 46) { tk.got = true; state.got.add(tk.name); onToken(tk); }
+  }
+  for (const n of NODES) {
+    const inside = Math.hypot(n.x - p.x, n.y - p.y) < n.r + 14;
+    if (inside && !n.inside && !state.paused) openNode(n);
+    n.inside = inside;
+  }
+}
+
+/* ---------- draw ---------- */
+function toScreen(x, y) { return { x: (x - state.cam.x) * scale + vw / 2, y: (y - state.cam.y) * scale + vh / 2 }; }
+
+function draw() {
+  const t = state.t;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, vw, vh);
+  ctx.setTransform(dpr * scale, 0, 0, dpr * scale, dpr * (vw / 2 - state.cam.x * scale), dpr * (vh / 2 - state.cam.y * scale));
+
+  // dot grid
+  const vwW = vw / scale, vhW = vh / scale, gs = 48;
+  const x0 = Math.floor((state.cam.x - vwW / 2) / gs) * gs, y0 = Math.floor((state.cam.y - vhW / 2) / gs) * gs;
+  ctx.fillStyle = C.line;
+  for (let x = x0; x < state.cam.x + vwW / 2 + gs; x += gs)
+    for (let y = y0; y < state.cam.y + vhW / 2 + gs; y += gs)
+      if (x >= 0 && y >= 0 && x <= WORLD.w && y <= WORLD.h) ctx.fillRect(x - 1, y - 1, 2, 2);
+  // world border
+  ctx.strokeStyle = C.line; ctx.lineWidth = 2; ctx.setLineDash([2, 10]); ctx.strokeRect(0, 0, WORLD.w, WORLD.h); ctx.setLineDash([]);
+
+  // edges
+  EDGES.forEach(([ai, bi], i) => {
+    const a = N[ai], b = N[bi], lit = (ai === "in" || state.visited.has(ai)) && state.visited.has(bi);
+    ctx.beginPath();
+    const mx = (a.x + b.x) / 2;
+    ctx.moveTo(a.x, a.y); ctx.bezierCurveTo(mx, a.y, mx, b.y, b.x, b.y);
+    ctx.strokeStyle = lit ? C.accent : C.line; ctx.globalAlpha = lit ? 0.75 : 1; ctx.lineWidth = lit ? 2.5 : 2;
+    ctx.setLineDash([7, 11]); ctx.lineDashOffset = reduce ? 0 : -t * 34; ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    // packet
+    if (!reduce) {
+      const pt = bez(a, b, ((t * 0.18) + i * 0.137) % 1);
+      ctx.fillStyle = lit ? C.accent : C.muted; ctx.globalAlpha = 0.85;
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+    }
+  });
+
+  // inbound marker
+  ctx.font = `600 12px ${FONT.m}`; ctx.textAlign = "center"; ctx.fillStyle = C.muted;
+  ctx.fillText("INBOUND · WHATSAPP", SPAWN.x, SPAWN.y - 56);
+  ctx.strokeStyle = C.wa; ctx.globalAlpha = 0.5; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(SPAWN.x, SPAWN.y, 34 + Math.sin(t * 2) * 3, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+
+  // tokens
+  ctx.font = `600 13px ${FONT.m}`;
+  for (const tk of TOKENS) {
+    if (tk.got) continue;
+    const bob = reduce ? 0 : Math.sin(t * 2 + tk.phase) * 5;
+    const w = ctx.measureText(tk.name).width + 26, h = 30;
+    roundRect(ctx, tk.x - w / 2, tk.y - h / 2 + bob, w, h, 15);
+    ctx.fillStyle = C["bg-2"]; ctx.fill(); ctx.strokeStyle = C.accent; ctx.globalAlpha = 0.65; ctx.lineWidth = 1.5; ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.fillStyle = C.fg; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(tk.name, tk.x, tk.y + bob + 1);
+  }
+  ctx.textBaseline = "alphabetic";
+
+  // nodes
+  for (const n of NODES) {
+    const v = state.visited.has(n.id), near = n.inside;
+    if (!v && !reduce) {
+      ctx.strokeStyle = n.flagship ? C.wa : C.accent; ctx.lineWidth = 2;
+      const pr = (t * 0.6 + n.x * 0.001) % 1;
+      ctx.globalAlpha = (1 - pr) * 0.5; ctx.beginPath(); ctx.arc(n.x, n.y, n.r + pr * 34, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    ctx.fillStyle = n.flagship ? C["wa-deep"] : C["bg-2"]; ctx.fill();
+    ctx.lineWidth = near ? 4 : 2; ctx.strokeStyle = v ? C.accent : (n.flagship ? C.wa : C.line); ctx.stroke();
+    // inner mark
+    if (v) {
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.beginPath(); ctx.moveTo(n.x - 16, n.y + 1); ctx.lineTo(n.x - 4, n.y + 13); ctx.lineTo(n.x + 18, n.y - 12); ctx.stroke(); ctx.lineCap = "butt";
+    } else if (n.flagship) {
+      ctx.font = `800 54px ${FONT.d}`; ctx.fillStyle = C.wa; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("W", n.x, n.y + 3); ctx.textBaseline = "alphabetic";
+    } else {
+      ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(n.x, n.y, 6 + (reduce ? 0 : Math.sin(t * 3 + n.y) * 1.5), 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(n.x, n.y, n.r * 0.55, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.textAlign = "center";
+    ctx.font = `600 12px ${FONT.m}`; ctx.fillStyle = n.flagship ? C.wa : C.accent;
+    ctx.fillText(n.kind.toUpperCase(), n.x, n.y - n.r - 16);
+    ctx.font = `800 ${n.flagship ? 30 : 24}px ${FONT.d}`; ctx.fillStyle = C.fg;
+    ctx.fillText(n.title, n.x, n.y + n.r + 34);
+  }
+
+  // trail + player
+  const p = state.player;
+  for (const q of p.trail) { ctx.globalAlpha = q.life * 0.35; ctx.fillStyle = C.wa; ctx.beginPath(); ctx.arc(q.x, q.y, 8 * q.life, 0, Math.PI * 2); ctx.fill(); }
+  ctx.globalAlpha = 1;
+  const tilt = Math.max(-0.25, Math.min(0.25, p.vx / 1600));
+  ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(tilt);
+  ctx.shadowColor = "rgba(79,191,134,.55)"; ctx.shadowBlur = 24;
+  roundRect(ctx, -26, -19, 52, 34, 12); ctx.fillStyle = C.wa; ctx.fill(); ctx.shadowBlur = 0;
+  ctx.beginPath(); ctx.moveTo(-18, 13); ctx.lineTo(-24, 24); ctx.lineTo(-6, 14); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#06231a";
+  for (let i = 0; i < 3; i++) { const yy = reduce ? 0 : Math.sin(t * 7 - i * 0.8) * 3; ctx.beginPath(); ctx.arc(-11 + i * 11, -2 + yy, 3.6, 0, Math.PI * 2); ctx.fill(); }
+  ctx.restore();
+
+  // target marker
+  if (state.target) {
+    ctx.strokeStyle = C.fg; ctx.globalAlpha = 0.5; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(state.target.x, state.target.y, 14 + Math.sin(t * 6) * 2, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+
+  // screen space: guide arrow to nearest unvisited node
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (state.started && !state.done) drawGuide();
+  drawMini();
+}
+
+function drawGuide() {
+  const p = state.player; let best = null, bd = Infinity;
+  for (const n of NODES) { if (state.visited.has(n.id)) continue; const d = Math.hypot(n.x - p.x, n.y - p.y); if (d < bd) { bd = d; best = n; } }
+  if (!best) return;
+  const s = toScreen(best.x, best.y), m = 70;
+  const top = 76;
+  if (s.x > 0 && s.x < vw && s.y > top && s.y < vh) return;
+  const cx = vw / 2, cy = vh / 2, dx = s.x - cx, dy = s.y - cy;
+  const kx = dx ? ((dx > 0 ? vw - m : m) - cx) / dx : Infinity, ky = dy ? ((dy > 0 ? vh - m : top + 30) - cy) / dy : Infinity;
+  const k = Math.min(Math.abs(kx), Math.abs(ky));
+  const ax = cx + dx * k, ay = cy + dy * k, ang = Math.atan2(dy, dx);
+  ctx.save(); ctx.translate(ax, ay); ctx.rotate(ang);
+  ctx.fillStyle = C.accent; ctx.beginPath(); ctx.moveTo(16, 0); ctx.lineTo(-8, -11); ctx.lineTo(-3, 0); ctx.lineTo(-8, 11); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  ctx.font = `600 12px ${FONT.m}`; ctx.fillStyle = C.fg; ctx.textAlign = "center";
+  const lx = Math.max(60, Math.min(vw - 60, ax - Math.cos(ang) * 34)), ly = Math.max(top + 10, Math.min(vh - 30, ay - Math.sin(ang) * 26 + 4));
+  ctx.fillText(best.title, lx, ly);
+}
+
+function drawMini() {
+  const w = mini.width / dpr, h = mini.height / dpr, sx = w / WORLD.w, sy = h / WORLD.h;
+  mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  mctx.clearRect(0, 0, w, h);
+  mctx.strokeStyle = C.line; mctx.lineWidth = 1;
+  EDGES.forEach(([a, b]) => { mctx.beginPath(); mctx.moveTo(N[a].x * sx, N[a].y * sy); mctx.lineTo(N[b].x * sx, N[b].y * sy); mctx.stroke(); });
+  for (const n of NODES) { mctx.fillStyle = state.visited.has(n.id) ? C.accent : (n.flagship ? C.wa : C.muted); mctx.beginPath(); mctx.arc(n.x * sx, n.y * sy, n.flagship ? 4 : 3, 0, Math.PI * 2); mctx.fill(); }
+  const vwW = vw / scale, vhW = vh / scale;
+  mctx.strokeStyle = C.fg; mctx.globalAlpha = 0.4; mctx.strokeRect((state.cam.x - vwW / 2) * sx, (state.cam.y - vhW / 2) * sy, vwW * sx, vhW * sy); mctx.globalAlpha = 1;
+  mctx.fillStyle = C.wa; mctx.beginPath(); mctx.arc(state.player.x * sx, state.player.y * sy, 3.5, 0, Math.PI * 2); mctx.fill();
+}
+
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (!$("#game").hidden) { update(dt); draw(); }
+  requestAnimationFrame(loop);
+}
+
+/* ---------- input ---------- */
+const KEYMAP = { ArrowUp: "ArrowUp", ArrowDown: "ArrowDown", ArrowLeft: "ArrowLeft", ArrowRight: "ArrowRight", w: "w", a: "a", s: "s", d: "d", W: "w", A: "a", S: "s", D: "d" };
+window.addEventListener("keydown", e => {
+  if ($("#game").hidden) return;
+  if (e.key === "Escape" && state.openNode) { closePanel(); return; }
+  if (e.key === "Enter" && !state.started && !$("#startOverlay").hidden) { e.preventDefault(); start(); return; }
+  const k = KEYMAP[e.key];
+  if (k && !(e.target.closest && e.target.closest("input,textarea"))) { state.keys[k] = true; if (e.key.startsWith("Arrow")) e.preventDefault(); }
+});
+window.addEventListener("keyup", e => { const k = KEYMAP[e.key]; if (k) state.keys[k] = false; });
+window.addEventListener("blur", () => { state.keys = {}; });
+canvas.addEventListener("pointerdown", e => {
+  if (!state.started || state.paused) return;
+  const r = canvas.getBoundingClientRect();
+  const wx = state.cam.x + (e.clientX - r.left - vw / 2) / scale, wy = state.cam.y + (e.clientY - r.top - vh / 2) / scale;
+  const hit = NODES.find(n => Math.hypot(n.x - wx, n.y - wy) < n.r + 20);
+  state.target = hit ? { x: hit.x, y: hit.y } : { x: Math.max(30, Math.min(WORLD.w - 30, wx)), y: Math.max(30, Math.min(WORLD.h - 30, wy)) };
+});
+
+/* ---------- panels ---------- */
+function panelFor(n) {
+  const p = PROJECTS.find(x => x.id === n.id);
+  if (p) return `
+    <p class="kind">${esc(n.kind)} · project</p>
+    <h2 id="panelTitle">${esc(p.title)}</h2>
+    <p class="lede">${esc(p.summary)}</p>
+    <h3>What I built</h3><ul class="ticks">${p.points.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    <h3>Stack</h3>${chips(p.stack, state.got)}
+    <div class="row"><a class="btn primary" href="${GH}/${p.repo}" target="_blank" rel="noopener">View ${esc(p.repo)} ↗</a></div>`;
+  switch (n.id) {
+    case "orch": return `
+      <p class="kind">Orchestrator · routes the request</p>
+      <h2 id="panelTitle">Hi, I'm Vrushil.</h2>
+      <p class="lede">A GenAI engineer in Surat. I build agentic systems that do real work for businesses: answering customers, taking orders, booking appointments, following up.</p>
+      <p style="margin-top:12px">I care about the unglamorous parts that decide whether an agent survives production: timeouts and fallbacks, memory that stays relevant, cost per reply, and replying correctly when someone writes in three languages at once.</p>
+      <dl class="facts">
+        <dt>Now</dt><dd>GenAI Developer at Dominor Digital, since Sep 2026</dd>
+        <dt>Founded</dt><dd>Wogent, my own WhatsApp AI agent platform, in production</dd>
+        <dt>Studied</dt><dd>BCA, Silver Oak University · CGPA 8.64</dd>
+        <dt>Speaks</dt><dd>Gujarati, Hindi, English</dd>
+      </dl>
+      <h3>Route chosen</h3>
+      <p>PLANNER. Your request needs several steps. Head up to Memory and Planner, pick up tools on the way down.</p>`;
+    case "memory": return `
+      <p class="kind">Memory · long-term context</p>
+      <h2 id="panelTitle">Experience</h2>
+      <ol class="tl">${EXPERIENCE.map(x => `<li><span class="when">${esc(x.when)} · ${esc(x.where)}</span><b>${esc(x.role)} <span class="org">@ ${esc(x.org)}</span></b>${x.points[0] ? `<p>${esc(x.points[0])}</p>` : ""}</li>`).join("")}</ol>`;
+    case "tools": return `
+      <p class="kind">Tools · ${state.got.size}/${SKILLS.length} loaded</p>
+      <h2 id="panelTitle">My stack</h2>
+      <p class="lede">The tools are floating around this node. Drive into them to load them; loaded ones turn saffron.</p>
+      ${SKILL_GROUPS.map(([g, list]) => `<h3>${esc(g)}</h3>${chips(list, state.got)}`).join("")}`;
+    case "planner": return `
+      <p class="kind">Planner · next tasks</p>
+      <h2 id="panelTitle">Projects</h2>
+      <p class="lede">Pick one and I'll route you there.</p>
+      <h3>Shipped</h3>
+      <ul class="go-list">${["wogent", ...PROJECTS.map(p => p.id)].map(id => { const nn = N[id]; const done = state.visited.has(id);
+        return `<li><button data-go="${id}" class="${done ? "done" : ""}"><b>${esc(id === "wogent" ? "Wogent · flagship" : PROJECTS.find(p => p.id === id).title)}</b><span>${done ? "visited ✓" : esc(nn.kind)}</span></button></li>`; }).join("")}</ul>`;
+    case "wogent": return `
+      <p class="kind" style="color:var(--wa)">Flagship · my own product · founder</p>
+      <h2 id="panelTitle">Wogent</h2>
+      <p class="lede">A WhatsApp AI agent for Indian businesses. It answers customers, takes orders and books appointments 24/7 in Hindi, Gujarati and English, on the official WhatsApp Cloud API.</p>
+      <h3>Demo conversation</h3>
+      <div class="chat" id="panelChat">${chatHTML(CHAT.slice(0, 4))}</div>
+      <h3>What it does</h3>
+      <ul class="ticks">
+        <li>Understands messy, code-mixed messages and replies in the customer's language</li>
+        <li>Reads photos, payment screenshots and PDFs; hears voice notes and replies with one</li>
+        <li>Remembers returning customers, so “same as last time” works</li>
+        <li>Broadcasts with STOP handling and quiet hours, plus follow-up journeys that stop when the customer replies</li>
+        <li>Shared inbox with one-tap human takeover and roles for staff</li>
+        <li>Each external service has its own timeout and fallback, so no message is lost</li>
+      </ul>
+      <h3>Architecture</h3>${chips(WOGENT_STACK)}
+      <div class="row"><a class="btn primary" href="https://web.wogent.in/" target="_blank" rel="noopener">Visit web.wogent.in ↗</a></div>`;
+    case "super": return `
+      <p class="kind">Supervisor · final response</p>
+      <h2 id="panelTitle">Let's build an agent.</h2>
+      <p class="lede">I'm open to GenAI and agent engineering roles, freelance agent builds, and businesses that want their WhatsApp answered.</p>
+      <h3>Email</h3>
+      <div class="copy-line">${EMAIL}</div>
+      <div class="row">
+        <button class="btn primary" data-copy="${EMAIL}">Copy email</button>
+        <a class="btn" href="${GH}" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="btn ghost" href="https://web.wogent.in/" target="_blank" rel="noopener">Wogent ↗</a>
+      </div>
+      <h3>Progress</h3>
+      <p>${state.visited.size}/${NODES.length} nodes visited · ${state.got.size}/${SKILLS.length} tools loaded.</p>`;
+  }
+  return "";
+}
+
+const panel = $("#panel"), panelBody = $("#panelBody");
+function openNode(n) {
+  state.target = null;
+  if (!state.visited.has(n.id)) { state.visited.add(n.id); updateStats(); }
+  state.openNode = n; state.paused = true;
+  panelBody.innerHTML = panelFor(n); panelBody.scrollTop = 0;
+  panel.hidden = false;
+  if (G && !reduce) {
+    const narrow = vw < 641;
+    G.fromTo(panel, narrow ? { y: 60, opacity: 0 } : { x: 50, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.45, ease: "power3.out" });
+    G.from(panelBody.children, { y: 16, opacity: 0, duration: 0.4, stagger: 0.04, ease: "power2.out", delay: 0.08 });
+    const pc = $("#panelChat"); if (pc) G.from(pc.children, { y: 12, opacity: 0, scale: 0.96, duration: 0.35, stagger: 0.35, delay: 0.4, ease: "back.out(2)" });
+  }
+  $("#panelClose").focus({ preventScroll: true });
+}
+function closePanel(after) {
+  if (!state.openNode) return;
+  const finish = () => {
+    panel.hidden = true; state.openNode = null; state.paused = false; state.keys = {};
+    canvas.focus({ preventScroll: true });
+    if (after) after();
+    if (!state.done && state.visited.size === NODES.length) finishRun();
+  };
+  if (G && !reduce) G.to(panel, { opacity: 0, x: vw < 641 ? 0 : 30, y: vw < 641 ? 40 : 0, duration: 0.22, ease: "power2.in", onComplete: finish });
+  else finish();
+}
+$("#panelClose").addEventListener("click", () => closePanel());
+panelBody.addEventListener("click", e => {
+  const b = e.target.closest("[data-go]");
+  if (b) { const n = N[b.dataset.go]; closePanel(() => { state.target = { x: n.x, y: n.y }; }); }
+});
+
+/* ---------- HUD, toasts, run ---------- */
+function updateStats() {
+  $("#statNodes").textContent = state.visited.size; $("#statTools").textContent = state.got.size;
+}
+$("#statNodesMax").textContent = NODES.length; $("#statToolsMax").textContent = SKILLS.length;
+const toast = $("#toast"); let toastTl;
+function showToast(html) {
+  toast.innerHTML = html;
+  if (!G) { toast.style.opacity = 1; clearTimeout(toastTl); toastTl = setTimeout(() => toast.style.opacity = 0, 1600); return; }
+  G.killTweensOf(toast);
+  G.fromTo(toast, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.25 });
+  G.to(toast, { opacity: 0, duration: 0.3, delay: 1.6 });
+}
+function onToken(tk) {
+  updateStats();
+  showToast(`Tool loaded · <b>${esc(tk.name)}</b> · ${state.got.size}/${SKILLS.length}`);
+  if (G && !reduce) G.fromTo("#statTools", { scale: 1.6 }, { scale: 1, duration: 0.4, ease: "back.out(3)", transformOrigin: "50% 50%", display: "inline-block" });
+  if (state.got.size === SKILLS.length) setTimeout(() => showToast("All tools loaded · <b>full stack unlocked</b>"), 1900);
+}
+function fmt(ms) { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+function start() {
+  state.started = true; state.paused = false; state.startTime = performance.now();
+  const o = $("#startOverlay");
+  const done = () => { o.hidden = true; canvas.focus({ preventScroll: true }); };
+  if (G && !reduce) G.to(o, { opacity: 0, duration: 0.4, onComplete: done }); else done();
+  setTimeout(() => showToast("Head right to the <b>Orchestrator</b>"), 500);
+}
+function finishRun() {
+  state.done = true; state.paused = true;
+  $("#doneText").textContent = `Your message visited all ${NODES.length} nodes in ${fmt(performance.now() - state.startTime)} and loaded ${state.got.size} of ${SKILLS.length} tools. That's roughly what my agents do for every customer message, only faster.`;
+  const o = $("#doneOverlay"); o.hidden = false; o.style.opacity = 1;
+  if (G && !reduce) { G.from(o, { opacity: 0, duration: 0.4 }); G.from(o.querySelector(".card"), { y: 40, scale: 0.96, duration: 0.6, ease: "power3.out" }); }
+}
+function replay() {
+  state.visited.clear(); state.got.clear(); TOKENS.forEach(t => t.got = false); NODES.forEach(n => n.inside = false);
+  Object.assign(state.player, { x: SPAWN.x, y: SPAWN.y, vx: 0, vy: 0, trail: [] });
+  state.done = false; state.paused = false; state.startTime = performance.now(); updateStats();
+  $("#doneOverlay").hidden = true; canvas.focus({ preventScroll: true });
+}
+$("#startBtn").addEventListener("click", start);
+$("#readBtn").addEventListener("click", () => setMode("read"));
+$("#doneRead").addEventListener("click", () => setMode("read"));
+$("#doneReplay").addEventListener("click", replay);
+$("#doneContact").addEventListener("click", () => { $("#doneOverlay").hidden = true; state.paused = false; openNode(N.super); });
+
+/* ================= READ MODE ================= */
+function buildRead() {
+  $("#phoneChat").innerHTML = chatHTML(CHAT);
+  $("#steps").innerHTML = STEPS.map((s, i) => `<li${i === 0 ? ' class="on"' : ""}><span>0${i + 1}</span>${esc(s)}</li>`).join("");
+  $("#wogentStack").innerHTML = chips(WOGENT_STACK);
+  $("#projectGrid").innerHTML = PROJECTS.map(p => `
+    <a class="pcard" href="${GH}/${p.repo}" target="_blank" rel="noopener">
+      <span class="arrow">↗</span><span class="kind">${esc(p.kind)}</span>
+      <h3>${esc(p.title)}</h3><p>${esc(p.summary)}</p>${chips(p.stack.slice(0, 5))}
+    </a>`).join("");
+  $("#xp").insertAdjacentHTML("beforeend", EXPERIENCE.map(x => `
+    <article class="xp-item"><div class="xp-when">${esc(x.when)}<br>${esc(x.where)}</div>
+      <div><h3>${esc(x.role)} <span>@ ${esc(x.org)}</span></h3>${x.points.length ? `<ul>${x.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}</div>
+    </article>`).join(""));
+  const row = list => [...list, ...list].map(s => `<span>${esc(s)}</span>`).join("");
+  const half = Math.ceil(SKILLS.length / 2);
+  $("#mq1").innerHTML = row(SKILLS.slice(0, half)); $("#mq2").innerHTML = row(SKILLS.slice(half));
+  // split statement into words
+  const st = $("#statementText"); st.innerHTML = st.textContent.split(" ").map(w => `<span class="sw">${esc(w)}</span>`).join(" ");
+  // split hero title into masked words
+  const ht = $("#heroTitle");
+  ht.innerHTML = ht.innerHTML.replace(/<em>(.*?)<\/em>/, "§$1§").split(" ").map(w => {
+    const em = w.includes("§"); const clean = w.replace(/§/g, "");
+    return `<span class="w"><span>${em ? `<em>${clean}</em>` : clean}</span></span>`;
+  }).join(" ");
+}
+
+let readInit = false;
+function initRead() {
+  if (readInit) { if (G && typeof ScrollTrigger !== "undefined") ScrollTrigger.refresh(); return; }
+  readInit = true;
+  if (!G || reduce || typeof ScrollTrigger === "undefined") return;
+  G.from("#heroTitle .w > span", { yPercent: 110, duration: 1, stagger: 0.06, ease: "power4.out" });
+  G.from(".hero .hero-sub, .hero .row, .hero-meta", { y: 24, opacity: 0, duration: 0.8, stagger: 0.1, delay: 0.45, ease: "power3.out" });
+
+  G.to("#statementText .sw", { opacity: 1, stagger: 0.12, ease: "none",
+    scrollTrigger: { trigger: "#statement", start: "top 75%", end: "bottom 45%", scrub: true } });
+
+  const msgs = G.utils.toArray("#phoneChat .msg"), steps = G.utils.toArray("#steps li");
+  const stepFor = [0, 0, 1, 1, 2, 2];
+  const setStep = i => steps.forEach((s, j) => s.classList.toggle("on", j === i));
+  ScrollTrigger.matchMedia({
+    "(min-width: 900px)": () => {
+      const tl = G.timeline({ scrollTrigger: { trigger: "#showcase", start: "top top+=72", end: "+=1400", pin: true, scrub: 0.6,
+        onUpdate: self => { const i = Math.min(msgs.length - 1, Math.floor(self.progress * msgs.length)); setStep(self.progress > 0.97 ? 3 : stepFor[i]); } } });
+      msgs.slice(2).forEach(m => tl.from(m, { opacity: 0, y: 30, scale: 0.94, duration: 1, ease: "back.out(1.6)" }, "+=0.3"));
+      tl.to({}, { duration: 1 });
+    },
+    "(max-width: 899px)": () => {
+      G.from(msgs.slice(2), { opacity: 0, y: 24, stagger: 0.35, duration: 0.5, ease: "back.out(1.6)",
+        scrollTrigger: { trigger: "#phoneChat", start: "top 75%", onEnter: () => setStep(3) } });
+    }
+  });
+
+  G.from("#projectGrid .pcard", { y: 60, opacity: 0.2, stagger: 0.08, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: "#projectGrid", start: "top 85%" } });
+  G.fromTo(".xp-line i", { scaleY: 0 }, { scaleY: 1, ease: "none", scrollTrigger: { trigger: "#xp", start: "top 70%", end: "bottom 60%", scrub: true } });
+  G.utils.toArray(".xp-item").forEach(el => G.from(el, { x: -24, opacity: 0.2, duration: 0.7, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" } }));
+  G.from(".contact h2.big", { yPercent: 30, opacity: 0.2, duration: 1, ease: "power4.out", scrollTrigger: { trigger: "#contact", start: "top 80%" } });
+
+  if (matchMedia("(hover: hover)").matches) {
+    G.utils.toArray(".pcard").forEach(card => {
+      card.addEventListener("pointermove", e => { const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        G.to(card, { rotateY: x * 8, rotateX: -y * 8, transformPerspective: 900, duration: 0.4, ease: "power2.out" }); });
+      card.addEventListener("pointerleave", () => G.to(card, { rotateX: 0, rotateY: 0, duration: 0.6, ease: "power3.out" }));
+    });
+  }
+}
+
+/* ================= MODE + GLOBAL UI ================= */
+function setMode(mode, push = true) {
+  const play = mode === "play";
+  $("#game").hidden = !play; $("#read").hidden = play;
+  document.body.classList.toggle("is-play", play);
+  $("#modePlay").setAttribute("aria-pressed", play); $("#modeRead").setAttribute("aria-pressed", !play);
+  if (push) { try { history.replaceState(null, "", play ? "#play" : "#read"); } catch (e) {} }
+  if (play) { resize(); canvas.focus({ preventScroll: true }); }
+  else { window.scrollTo(0, 0); requestAnimationFrame(initRead); }
+}
+$("#modePlay").addEventListener("click", () => setMode("play"));
+$("#modeRead").addEventListener("click", () => setMode("read"));
+document.addEventListener("click", e => {
+  const m = e.target.closest("[data-mode]"); if (m) { e.preventDefault(); setMode(m.dataset.mode); }
+  const sc = e.target.closest("[data-scroll]"); if (sc) { document.getElementById(sc.dataset.scroll).scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }
+  const cp = e.target.closest("[data-copy]");
+  if (cp) {
+    const text = cp.dataset.copy, label = cp.textContent;
+    const ok = () => { cp.textContent = "Copied"; setTimeout(() => cp.textContent = label, 1500); };
+    const fallback = () => { const el = cp.parentElement.parentElement.querySelector(".copy-line") || cp.parentElement.querySelector(".copy-line");
+      if (el) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); cp.textContent = "Selected, press Ctrl+C"; setTimeout(() => cp.textContent = label, 2200); } };
+    try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (err) { fallback(); }
+  }
+});
+document.querySelector(".brand").addEventListener("click", e => { e.preventDefault(); setMode("play"); });
+document.querySelector(".skip").addEventListener("click", e => { e.preventDefault(); setMode("read"); });
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (h === "read" || h === "play") setMode(h, false); });
+
+if (location.search.includes("debug")) window.__pf = { state, N };
+buildRead();
+setMode(location.hash === "#read" ? "read" : "play", false);
+resize();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => readColors());
+requestAnimationFrame(loop);
+if (G && !reduce) G.from("#startOverlay .card", { y: 40, opacity: 0, duration: 0.8, ease: "power3.out", delay: 0.15 });
+})();
+</script>
+</body>
+</html>
